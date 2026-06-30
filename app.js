@@ -1,3 +1,11 @@
-[root@cadclcldlx012 ~]# oc auth can-i create processedtemplates.template.openshift.io   -n openshift   --as=system:serviceaccount:default:svc-ads
-no
-[root@cadcl
+oc patch clusterrole devops-deployer --type=json -p='[
+  {
+    "op":"add",
+    "path":"/rules/-",
+    "value":{
+      "apiGroups":["template.openshift.io"],
+      "resources":["templates","processedtemplates"],
+      "verbs":["*"]
+    }
+  }
+]'
