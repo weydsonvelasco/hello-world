@@ -1,11 +1,4 @@
-var express = require('express');
-app = express();
-
-app.get('/', function (req, res) {
-  res.send('Hello World!, tomei uma peia!!!!\n');
-});
-
-app.listen(8080, function () {
-  console.log('Example app listening on port 8080!');
-});
-
+ vim /var/named/dynamic/nuvem.caixa
+^C
+mv: cannot stat '/tmp/.named.conf.ea9c9414940d1807afa19876a6961199': No such file or directory
+[root@cadclcldlx011 ~]#
