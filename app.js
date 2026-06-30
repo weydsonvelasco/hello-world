@@ -11,3 +11,17 @@ oc auth can-i create processedtemplates.template.openshift.io \
   - get
   - list
   - watch
+
+
+- apiGroups:
+  - template.openshift.io
+  resources:
+  - templates
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
