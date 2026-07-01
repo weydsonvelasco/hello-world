@@ -69,4 +69,113 @@ não, vamos precisar ajustar por Weydson Velasco de Azevedo
 09:45
 Weydson Velasco de Azevedo
 não, vamos precisar ajustar
+
+
 tem menu de contexto
+
+
+
+
+
+
+
+
+
+#!/bin/bash
+set -e
+
+PROJETO_AMBIENTE="$(PROJETO)-$(AMBIENTE)"
+EGRESS_NAME="${PROJETO_AMBIENTE}-egress"
+
+ALOCAIP_SITE=$(ALOCAIP_SITE_1)
+ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_1)
+ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_1)
+ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_1)
+ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_1)
+ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_1)
+ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_1)
+
+echo "PROJETO: $PROJETO_AMBIENTE"
+echo "EGRESS_NAME: $EGRESS_NAME"
+echo "ALOCAIP_SITE: $ALOCAIP_SITE"
+echo "ALOCAIP_VERTICAL: $ALOCAIP_VERTICAL"
+echo "ALOCAIP_AMBIENTE: $ALOCAIP_AMBIENTE"
+echo "ALOCAIP_UNIDADE: $ALOCAIP_UNIDADE"
+echo "ALOCAIP_RED_NUM: $ALOCAIP_RED_NUM"
+echo "ALOCAIP_INICIO_RANGE: $ALOCAIP_INICIO_RANGE"
+echo "ALOCAIP_FIM_RANGE: $ALOCAIP_FIM_RANGE"
+
+is_set=$(oc get egressip "$EGRESS_NAME" \
+  -o=jsonpath='{.spec.egressIPs[0]}' 2>/dev/null || true)
+
+if [[ -n "$is_set" ]]; then
+  echo "O IP de saída do projeto $PROJETO_AMBIENTE já está configurado com o IP: $is_set"
+  exit 0
+fi
+
+echo "Iniciando configuração do EgressIP no projeto $PROJETO_AMBIENTE"
+echo "Alocando o IP na API $(APIALOCAIP)"
+
+response_alocaip=$(curl -kfSL -w "%{http_code}" --location --request POST "$(APIALOCAIP)/ApiAlocaIP/Gerar" \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "id":"'$(ALOCAIP_ID)'",
+    "senha":"'$(ALOCAIP_SENHA)'",
+    "site":"'"$ALOCAIP_SITE"'",
+    "vertical":"'"$ALOCAIP_VERTICAL"'",
+    "ambiente":"'"$ALOCAIP_AMBIENTE"'",
+    "unidade":"'"$ALOCAIP_UNIDADE"'",
+    "categoria":"'$(ALOCAIP_CATEGORIA)'",
+    "descricao":"[Esteira Agil] Projeto OKD - '"$PROJETO_AMBIENTE"'",
+    "red_num":"'"$ALOCAIP_RED_NUM"'",
+    "par":"S",
+    "parCriado":"S",
+    "inicioRange":"'"$ALOCAIP_INICIO_RANGE"'",
+    "fimRange":"'"$ALOCAIP_FIM_RANGE"'"
+  }')
+
+status_code=$(echo "$response_alocaip" | awk -F'}' '{print $NF}')
+
+if [[ "$status_code" != "200" ]]; then
+  echo "[ERROR] Ocorreu um erro na geração do IP. status_code: $status_code"
+  exit 1
+fi
+
+ip_alocado=$(echo "${response_alocaip::-3}" | jq -r '.Gerar[1]')
+
+echo "IP alocado: $ip_alocado"
+
+if [[ -z "$ip_alocado" || "$ip_alocado" == "null" ]]; then
+  echo "[ERROR] A API AlocaIP não retornou um IP válido"
+  exit 1
+fi
+
+echo "Verificando se o IP $ip_alocado já está em uso em algum EgressIP"
+
+ip_existente=$(oc get egressip -o=jsonpath='{range .items[*]}{.metadata.name}{" "}{.spec.egressIPs}{"\n"}{end}' \
+  | grep "$ip_alocado" || true)
+
+if [[ -n "$ip_existente" ]]; then
+  echo "[ERROR] O IP adquirido via AlocaIP $ip_alocado já está configurado no cluster:"
+  echo "$ip_existente"
+  exit 1
+fi
+
+echo "Configurando o EgressIP $ip_alocado para o projeto $PROJETO_AMBIENTE"
+
+cat <<EOF | oc apply -f -
+apiVersion: k8s.ovn.org/v1
+kind: EgressIP
+metadata:
+  name: $EGRESS_NAME
+spec:
+  egressIPs:
+    - $ip_alocado
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: $PROJETO_AMBIENTE
+EOF
+
+echo "EgressIP criado com sucesso."
+
+oc get egressip "$EGRESS_NAME" -o wide
