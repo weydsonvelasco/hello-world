@@ -1,377 +1,109 @@
 #!/bin/bash
 set -e
  
-ALOCAIP_SITE=$(ALOCAIP_SITE_1)
-ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_1)
-ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_1)
-ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_1)
-ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_1)
-ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_1)
-ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_1)
- 
-echo "ALOCAIP_SITE: $ALOCAIP_SITE"
-echo "ALOCAIP_VERTICAL: $ALOCAIP_VERTICAL"
-echo "ALOCAIP_AMBIENTE: $ALOCAIP_AMBIENTE"
-echo "ALOCAIP_UNIDADE: $ALOCAIP_UNIDADE"
-echo "ALOCAIP_RED_NUM: $ALOCAIP_RED_NUM"
-echo "ALOCAIP_INICIO_RANGE: $ALOCAIP_INICIO_RANGE"
-echo "ALOCAIP_FIM_RANGE: $ALOCAIP_FIM_RANGE"
- 
 is_set=`oc get netnamespaces -l projeto=$(PROJETO)-$(AMBIENTE) -o=jsonpath='{.items[0].egressIPs}' | tr -d []`
  
-if [[ -n $is_set ]]
-then
-   echo "O IP de Saída do projeto: $(PROJETO)-$(AMBIENTE) já estava configurado com o IP: $is_set"
-else
-   echo "Iniciando Configuração do EgressIP no projeto $(PROJETO)-$(AMBIENTE)"
-   echo "Alocando o IP na API $(APIALOCAIP)"
+shopt -s extglob
+CLUSTER="${AMBIENTE}_${SITE}"
  
-  response_alocaip=`curl -kfSL -w "%{http_code}" --location --request POST ''$(APIALOCAIP)'/ApiAlocaIP/Gerar' \
-    --header 'Content-Type: application/json' \
-    --header 'Content-Type: text/plain' \
-    --data '{"id":"'$(ALOCAIP_ID)'",
-    "senha":"'$(ALOCAIP_SENHA)'",
-    "site":"'$ALOCAIP_SITE'",
-    "vertical":"'$ALOCAIP_VERTICAL'",
-    "ambiente":"'$ALOCAIP_AMBIENTE'",
-    "unidade":"'$ALOCAIP_UNIDADE'",
-    "categoria":"'$(ALOCAIP_CATEGORIA)'",
-    "descricao":"[Esteira Agil] Projeto OKD - '$(PROJETO)-$(AMBIENTE)'",
-    "red_num":"'$ALOCAIP_RED_NUM'",
-    "par":"S",
-    "parCriado":"S",
-    "inicioRange":"'$ALOCAIP_INICIO_RANGE'",
-    "fimRange":"'$ALOCAIP_FIM_RANGE'"
-  }'`
- 
-  status_code=`echo $response_alocaip | awk -F} '{print $NF}'`
-  if [[ $status_code != 200 ]]
+case "${CLUSTER,,}" in
+  # OPENSHIFT LOTERIAS-NPRD
+  +(des|tqs|hmp)_openshift_nprd_loterias)
+  ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_OPENSHIFT_LOTERIAS_NPRD)
+  ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_OPENSHIFT_LOTERIAS_NPRD)
+  ALOCAIP_SITE=$(ALOCAIP_SITE_OPENSHIFT_LOTERIAS_NPRD)
+  ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_OPENSHIFT_LOTERIAS_NPRD)
+  ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_OPENSHIFT_LOTERIAS_NPRD)
+  ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_OPENSHIFT_LOTERIAS_NPRD)
+  ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_OPENSHIFT_LOTERIAS_NPRD)
+  ;;
+  prd_ctc_canais)
+  if [ "$NODESELECTOR" == ob ]
   then
-    echo "[ERROR] Ocorreu um erro na geração do IP status_code $status_code"
-    exit 1
+  ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_PRD_CANAIS_CTC)
+  ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_PRD_CANAIS)
+  ALOCAIP_SITE=$(ALOCAIP_SITE)
+  ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_PRD_CANAIS)
+  ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_PRD_CANAIS)
+  ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_PRD_CANAIS_CTC_OB)
+  ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_PRD_CANAIS_CTC_OB)
   else
-    ip_alocado=`echo "${response_alocaip::-3}" | jq -r '.Gerar[1]'`
-    ## Verificando se o IP alocado via AlocaIP já está configurado em algum projeto
-    for ips_saida in `oc get netnamespaces -o=jsonpath='{range .items[*]}{@.egressIPs}{"\n"}' | tr -sd [] '\n'`
-    do
-      if [[ $ips_saida == $ip_alocado ]]
-      then
-        projeto_ip=`oc get netnamespaces | grep $ip_alocado | awk '{print $1}'`
-        echo "[ERROR] O IP adquirido via alocaIP: $ip_alocado já está configurado para o projeto $projeto_ip no OKD"
-        exit 1
-      fi
-    done
-    echo "Configurando o IP de Saída: $ip_alocado para o projeto: $(PROJETO)-$(AMBIENTE)"
-    oc patch netnamespace $(PROJETO)-$(AMBIENTE) --type=merge -p '{"egressIPs": ["'$ip_alocado'"]}'
-  fi
-fi
-não, vamos precisar ajustar por Weydson Velasco de Azevedo
-09:45
-Weydson Velasco de Azevedo
-não, vamos precisar ajustar
-
-
-tem menu de contexto
-
-
-
-
-
-
-
-
-
-#!/bin/bash
-set -e
-
-PROJETO_AMBIENTE="$(PROJETO)-$(AMBIENTE)"
-EGRESS_NAME="${PROJETO_AMBIENTE}-egress"
-
-ALOCAIP_SITE=$(ALOCAIP_SITE_1)
-ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_1)
-ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_1)
-ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_1)
-ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_1)
-ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_1)
-ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_1)
-
-echo "PROJETO: $PROJETO_AMBIENTE"
-echo "EGRESS_NAME: $EGRESS_NAME"
-echo "ALOCAIP_SITE: $ALOCAIP_SITE"
-echo "ALOCAIP_VERTICAL: $ALOCAIP_VERTICAL"
-echo "ALOCAIP_AMBIENTE: $ALOCAIP_AMBIENTE"
-echo "ALOCAIP_UNIDADE: $ALOCAIP_UNIDADE"
-echo "ALOCAIP_RED_NUM: $ALOCAIP_RED_NUM"
-echo "ALOCAIP_INICIO_RANGE: $ALOCAIP_INICIO_RANGE"
-echo "ALOCAIP_FIM_RANGE: $ALOCAIP_FIM_RANGE"
-
-is_set=$(oc get egressip "$EGRESS_NAME" \
-  -o=jsonpath='{.spec.egressIPs[0]}' 2>/dev/null || true)
-
-if [[ -n "$is_set" ]]; then
-  echo "O IP de saída do projeto $PROJETO_AMBIENTE já está configurado com o IP: $is_set"
-  exit 0
-fi
-
-echo "Iniciando configuração do EgressIP no projeto $PROJETO_AMBIENTE"
-echo "Alocando o IP na API $(APIALOCAIP)"
-
-response_alocaip=$(curl -kfSL -w "%{http_code}" --location --request POST "$(APIALOCAIP)/ApiAlocaIP/Gerar" \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "id":"'$(ALOCAIP_ID)'",
-    "senha":"'$(ALOCAIP_SENHA)'",
-    "site":"'"$ALOCAIP_SITE"'",
-    "vertical":"'"$ALOCAIP_VERTICAL"'",
-    "ambiente":"'"$ALOCAIP_AMBIENTE"'",
-    "unidade":"'"$ALOCAIP_UNIDADE"'",
-    "categoria":"'$(ALOCAIP_CATEGORIA)'",
-    "descricao":"[Esteira Agil] Projeto OKD - '"$PROJETO_AMBIENTE"'",
-    "red_num":"'"$ALOCAIP_RED_NUM"'",
-    "par":"S",
-    "parCriado":"S",
-    "inicioRange":"'"$ALOCAIP_INICIO_RANGE"'",
-    "fimRange":"'"$ALOCAIP_FIM_RANGE"'"
-  }')
-
-status_code=$(echo "$response_alocaip" | awk -F'}' '{print $NF}')
-
-if [[ "$status_code" != "200" ]]; then
-  echo "[ERROR] Ocorreu um erro na geração do IP. status_code: $status_code"
-  exit 1
-fi
-
-ip_alocado=$(echo "${response_alocaip::-3}" | jq -r '.Gerar[1]')
-
-echo "IP alocado: $ip_alocado"
-
-if [[ -z "$ip_alocado" || "$ip_alocado" == "null" ]]; then
-  echo "[ERROR] A API AlocaIP não retornou um IP válido"
-  exit 1
-fi
-
-echo "Verificando se o IP $ip_alocado já está em uso em algum EgressIP"
-
-ip_existente=$(oc get egressip -o=jsonpath='{range .items[*]}{.metadata.name}{" "}{.spec.egressIPs}{"\n"}{end}' \
-  | grep "$ip_alocado" || true)
-
-if [[ -n "$ip_existente" ]]; then
-  echo "[ERROR] O IP adquirido via AlocaIP $ip_alocado já está configurado no cluster:"
-  echo "$ip_existente"
-  exit 1
-fi
-
-echo "Configurando o EgressIP $ip_alocado para o projeto $PROJETO_AMBIENTE"
-
-cat <<EOF | oc apply -f -
-apiVersion: k8s.ovn.org/v1
-kind: EgressIP
-metadata:
-  name: $EGRESS_NAME
-spec:
-  egressIPs:
-    - $ip_alocado
-  namespaceSelector:
-    matchLabels:
-      kubernetes.io/metadata.name: $PROJETO_AMBIENTE
-EOF
-
-echo "EgressIP criado com sucesso."
-
-oc get egressip "$EGRESS_NAME" -o wide
-
-##########################################
-
-
-#!/bin/bash
-set -e
+  ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_PRD_CANAIS_CTC)
+  ALOCAIP_VERTICAL="$(ALOCAIP_VERTICAL_PRD_CANAIS)"
+  ALOCAIP_SITE=$(ALOCAIP_SITE)
+  ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_PRD_CANAIS)
+  ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_PRD_CANAIS)
+  ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_PRD_CANAIS_CTC)
+  ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_PRD_CANAIS_CTC)
+  fi  
+  ;;
+  prd_dtc_canais)
+  ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_PRD_CANAIS_DTC)
+  ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_PRD_CANAIS)
+  ALOCAIP_SITE=$(ALOCAIP_SITE_DTC)
+  ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_PRD_CANAIS)
+  ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_PRD_CANAIS)
+  ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_PRD_CANAIS_DTC)
+  ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_PRD_CANAIS_DTC)
+  ;;
+  # OKD 4
+  +(des|tqs|hmp)_okd4_nprd)
+  ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_OKD4)
+  ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_OKD4)
+  ALOCAIP_SITE=$(ALOCAIP_SITE_OKD4)
+  ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_OKD4)
+  ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_OKD4)
+  ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_OKD4)
+  ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_OKD4)
+  ;;
+  prd_okd4_prd)
+  ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_OKD4_PRD_CTC)
+  ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_OKD4_PRD_CTC)
+  ALOCAIP_SITE=$(ALOCAIP_SITE_OKD4_PRD_CTC)
+  ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_OKD4_PRD_CTC)
+  ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_OKD4_PRD_CTC)
+  ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_OKD4_PRD_CTC)
+  ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_OKD4_PRD_CTC)    
+  ;;
+  # OCP
+  +(des|tqs|hmp)_ocp_nprd)
+  ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_OCP)
+  ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_OCP)
+  ALOCAIP_SITE=$(ALOCAIP_SITE_OCP)
+  ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_OCP)
+  ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_OCP)
+  ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_OCP)
+  ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_OCP)
+  ;;
+  prd_ocp_prd)
+  ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_OCP_PRD)
+  ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_OCP_PRD)
+  ALOCAIP_SITE=$(ALOCAIP_SITE_OCP_PRD)
+  ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_OCP_PRD)
+  ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_OCP_PRD)
+  ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_OCP_PRD)
+  ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_OCP_PRD)      
+  ;;
+  # OCP LOTERIAS-PRD
+  prd_ocp_loterias)
+  echo "OCP LOTERIAS - PRD"
+  ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_OCP_LOTERIAS_PRD)
+  ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_OCP_LOTERIAS_PRD)
+  ALOCAIP_SITE=$(ALOCAIP_SITE_OCP_LOTERIAS_PRD)
+  ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_OCP_LOTERIAS_PRD)
+  ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_OCP_LOTERIAS_PRD)
+  ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_OCP_LOTERIAS_PRD)
+  ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_OCP_LOTERIAS_PRD)
+  ;;
+  *)
+  echo "Não encontrei as variavéis necessarias"
+  exit 1 ;;
+esac
  
-ALOCAIP_SITE=$(ALOCAIP_SITE_1)
-ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_1)
-ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_1)
-ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_1)
-ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_1)
-ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_1)
-ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_1)
- 
-echo "ALOCAIP_SITE: $ALOCAIP_SITE"
-echo "ALOCAIP_VERTICAL: $ALOCAIP_VERTICAL"
-echo "ALOCAIP_AMBIENTE: $ALOCAIP_AMBIENTE"
-echo "ALOCAIP_UNIDADE: $ALOCAIP_UNIDADE"
-echo "ALOCAIP_RED_NUM: $ALOCAIP_RED_NUM"
-echo "ALOCAIP_INICIO_RANGE: $ALOCAIP_INICIO_RANGE"
-echo "ALOCAIP_FIM_RANGE: $ALOCAIP_FIM_RANGE"
- 
-is_set=`oc get netnamespaces -l projeto=$(PROJETO)-$(AMBIENTE) -o=jsonpath='{.items[0].egressIPs}' | tr -d []`
- 
-if [[ -n $is_set ]]
-then
-   echo "O IP de Saída do projeto: $(PROJETO)-$(AMBIENTE) já estava configurado com o IP: $is_set"
-else
-   echo "Iniciando Configuração do EgressIP no projeto $(PROJETO)-$(AMBIENTE)"
-   echo "Alocando o IP na API $(APIALOCAIP)"
- 
-  response_alocaip=`curl -kfSL -w "%{http_code}" --location --request POST ''$(APIALOCAIP)'/ApiAlocaIP/Gerar' \
-    --header 'Content-Type: application/json' \
-    --header 'Content-Type: text/plain' \
-    --data '{"id":"'$(ALOCAIP_ID)'",
-    "senha":"'$(ALOCAIP_SENHA)'",
-    "site":"'$ALOCAIP_SITE'",
-    "vertical":"'$ALOCAIP_VERTICAL'",
-    "ambiente":"'$ALOCAIP_AMBIENTE'",
-    "unidade":"'$ALOCAIP_UNIDADE'",
-    "categoria":"'$(ALOCAIP_CATEGORIA)'",
-    "descricao":"[Esteira Agil] Projeto OKD - '$(PROJETO)-$(AMBIENTE)'",
-    "red_num":"'$ALOCAIP_RED_NUM'",
-    "par":"S",
-    "parCriado":"S",
-    "inicioRange":"'$ALOCAIP_INICIO_RANGE'",
-    "fimRange":"'$ALOCAIP_FIM_RANGE'"
-  }'`
- 
-  status_code=`echo $response_alocaip | awk -F} '{print $NF}'`
-  if [[ $status_code != 200 ]]
-  then
-    echo "[ERROR] Ocorreu um erro na geração do IP status_code $status_code"
-    exit 1
-  else
-    ip_alocado=`echo "${response_alocaip::-3}" | jq -r '.Gerar[1]'`
-    ## Verificando se o IP alocado via AlocaIP já está configurado em algum projeto
-    for ips_saida in `oc get netnamespaces -o=jsonpath='{range .items[*]}{@.egressIPs}{"\n"}' | tr -sd [] '\n'`
-    do
-      if [[ $ips_saida == $ip_alocado ]]
-      then
-        projeto_ip=`oc get netnamespaces | grep $ip_alocado | awk '{print $1}'`
-        echo "[ERROR] O IP adquirido via alocaIP: $ip_alocado já está configurado para o projeto $projeto_ip no OKD"
-        exit 1
-      fi
-    done
-    echo "Configurando o IP de Saída: $ip_alocado para o projeto: $(PROJETO)-$(AMBIENTE)"
-    oc patch netnamespace $(PROJETO)-$(AMBIENTE) --type=merge -p '{"egressIPs": ["'$ip_alocado'"]}'
-  fi
-fi
-tem menu de contexto
-
-
-
-
-
-
-
-
-
-
-
-
-#!/bin/bash
-set -e
-
-PROJETO_AMBIENTE="$(PROJETO)-$(AMBIENTE)"
-EGRESS_NAME="${PROJETO_AMBIENTE}-egress"
-
-ALOCAIP_SITE=$(ALOCAIP_SITE_1)
-ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_1)
-ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_1)
-ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_1)
-ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_1)
-ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_1)
-ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_1)
-
-echo "PROJETO: $PROJETO_AMBIENTE"
-echo "EGRESS_NAME: $EGRESS_NAME"
-echo "ALOCAIP_SITE: $ALOCAIP_SITE"
-echo "ALOCAIP_VERTICAL: $ALOCAIP_VERTICAL"
-echo "ALOCAIP_AMBIENTE: $ALOCAIP_AMBIENTE"
-echo "ALOCAIP_UNIDADE: $ALOCAIP_UNIDADE"
-echo "ALOCAIP_RED_NUM: $ALOCAIP_RED_NUM"
-echo "ALOCAIP_INICIO_RANGE: $ALOCAIP_INICIO_RANGE"
-echo "ALOCAIP_FIM_RANGE: $ALOCAIP_FIM_RANGE"
-
-is_set=$(oc get egressip "$EGRESS_NAME" \
-  -o=jsonpath='{.spec.egressIPs[0]}' 2>/dev/null || true)
-
-if [[ -n "$is_set" ]]; then
-  echo "O IP de saída do projeto $PROJETO_AMBIENTE já estava configurado com o IP: $is_set"
-  exit 0
-fi
-
-echo "Iniciando configuração do EgressIP no projeto $PROJETO_AMBIENTE"
-echo "Alocando o IP na API $(APIALOCAIP)"
-
-response_alocaip=$(curl -kfSL -w "%{http_code}" --location --request POST "$(APIALOCAIP)/ApiAlocaIP/Gerar" \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "id":"'$(ALOCAIP_ID)'",
-    "senha":"'$(ALOCAIP_SENHA)'",
-    "site":"'"$ALOCAIP_SITE"'",
-    "vertical":"'"$ALOCAIP_VERTICAL"'",
-    "ambiente":"'"$ALOCAIP_AMBIENTE"'",
-    "unidade":"'"$ALOCAIP_UNIDADE"'",
-    "categoria":"'$(ALOCAIP_CATEGORIA)'",
-    "descricao":"[Esteira Agil] Projeto OKD - '"$PROJETO_AMBIENTE"'",
-    "red_num":"'"$ALOCAIP_RED_NUM"'",
-    "par":"S",
-    "parCriado":"S",
-    "inicioRange":"'"$ALOCAIP_INICIO_RANGE"'",
-    "fimRange":"'"$ALOCAIP_FIM_RANGE"'"
-  }')
-
-status_code=$(echo "$response_alocaip" | awk -F'}' '{print $NF}')
-
-if [[ "$status_code" != "200" ]]; then
-  echo "[ERROR] Ocorreu um erro na geração do IP. status_code: $status_code"
-  exit 1
-fi
-
-ip_alocado=$(echo "${response_alocaip::-3}" | jq -r '.Gerar[1]')
-
-if [[ -z "$ip_alocado" || "$ip_alocado" == "null" ]]; then
-  echo "[ERROR] A API AlocaIP não retornou um IP válido"
-  exit 1
-fi
-
-echo "IP alocado: $ip_alocado"
-
-ip_existente=$(oc get egressip -o=jsonpath='{range .items[*]}{.metadata.name}{" "}{.spec.egressIPs}{"\n"}{end}' \
-  | grep "$ip_alocado" || true)
-
-if [[ -n "$ip_existente" ]]; then
-  echo "[ERROR] O IP adquirido via AlocaIP $ip_alocado já está configurado no cluster:"
-  echo "$ip_existente"
-  exit 1
-fi
-
-echo "Configurando o IP de saída $ip_alocado para o projeto $PROJETO_AMBIENTE"
-
-cat <<EOF | oc apply -f -
-apiVersion: k8s.ovn.org/v1
-kind: EgressIP
-metadata:
-  name: $EGRESS_NAME
-spec:
-  egressIPs:
-    - $ip_alocado
-  namespaceSelector:
-    matchLabels:
-      kubernetes.io/metadata.name: $PROJETO_AMBIENTE
-EOF
-
-echo "EgressIP criado com sucesso:"
-oc get egressip "$EGRESS_NAME" -o wide
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+echo "##vso[task.setvariable variable=ALOCAIP_RED_NUM_1;]$ALOCAIP_RED_NUM"
+echo "##vso[task.setvariable variable=ALOCAIP_VERTICAL_1;]$ALOCAIP_VERTICAL"
+echo "##vso[task.setvariable variable=ALOCAIP_SITE_1;]$ALOCAIP_SITE"
+echo "##vso[task.setvariable variable=ALOCAIP_AMBIENTE_1;]$ALOCAIP_AMBIENTE"
+echo "##vso[task.setvariable variable=ALOCAIP_UNIDADE_1;]$ALOCAIP_UNIDADE"
+echo "##vso[task.setvariable variable=ALOCAIP_INICIO_RANGE_1;]$ALOCAIP_INICIO_RANGE"
+echo "##vso[task.setvariable variable=ALOCAIP_FIM_RANGE_1;]$ALOCAIP_FIM_RANGE"
