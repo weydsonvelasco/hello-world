@@ -1,14 +1,72 @@
-{
-  "name": "nodejs-helloworld",
-  "version": "1.0.0",
-  "description": "Hello World!",
-  "main": "app.js",
-  "scripts": {
-    "start": "node app.js"
-  },
-  "author": "Red Hat Training",
-  "license": "ASL",
-  "dependencies": {
-    "express": "4.14.x"
-  }
-}
+#!/bin/bash
+set -e
+ 
+ALOCAIP_SITE=$(ALOCAIP_SITE_1)
+ALOCAIP_VERTICAL=$(ALOCAIP_VERTICAL_1)
+ALOCAIP_AMBIENTE=$(ALOCAIP_AMBIENTE_1)
+ALOCAIP_UNIDADE=$(ALOCAIP_UNIDADE_1)
+ALOCAIP_RED_NUM=$(ALOCAIP_RED_NUM_1)
+ALOCAIP_INICIO_RANGE=$(ALOCAIP_INICIO_RANGE_1)
+ALOCAIP_FIM_RANGE=$(ALOCAIP_FIM_RANGE_1)
+ 
+echo "ALOCAIP_SITE: $ALOCAIP_SITE"
+echo "ALOCAIP_VERTICAL: $ALOCAIP_VERTICAL"
+echo "ALOCAIP_AMBIENTE: $ALOCAIP_AMBIENTE"
+echo "ALOCAIP_UNIDADE: $ALOCAIP_UNIDADE"
+echo "ALOCAIP_RED_NUM: $ALOCAIP_RED_NUM"
+echo "ALOCAIP_INICIO_RANGE: $ALOCAIP_INICIO_RANGE"
+echo "ALOCAIP_FIM_RANGE: $ALOCAIP_FIM_RANGE"
+ 
+is_set=`oc get netnamespaces -l projeto=$(PROJETO)-$(AMBIENTE) -o=jsonpath='{.items[0].egressIPs}' | tr -d []`
+ 
+if [[ -n $is_set ]]
+then
+   echo "O IP de Saída do projeto: $(PROJETO)-$(AMBIENTE) já estava configurado com o IP: $is_set"
+else
+   echo "Iniciando Configuração do EgressIP no projeto $(PROJETO)-$(AMBIENTE)"
+   echo "Alocando o IP na API $(APIALOCAIP)"
+ 
+  response_alocaip=`curl -kfSL -w "%{http_code}" --location --request POST ''$(APIALOCAIP)'/ApiAlocaIP/Gerar' \
+    --header 'Content-Type: application/json' \
+    --header 'Content-Type: text/plain' \
+    --data '{"id":"'$(ALOCAIP_ID)'",
+    "senha":"'$(ALOCAIP_SENHA)'",
+    "site":"'$ALOCAIP_SITE'",
+    "vertical":"'$ALOCAIP_VERTICAL'",
+    "ambiente":"'$ALOCAIP_AMBIENTE'",
+    "unidade":"'$ALOCAIP_UNIDADE'",
+    "categoria":"'$(ALOCAIP_CATEGORIA)'",
+    "descricao":"[Esteira Agil] Projeto OKD - '$(PROJETO)-$(AMBIENTE)'",
+    "red_num":"'$ALOCAIP_RED_NUM'",
+    "par":"S",
+    "parCriado":"S",
+    "inicioRange":"'$ALOCAIP_INICIO_RANGE'",
+    "fimRange":"'$ALOCAIP_FIM_RANGE'"
+  }'`
+ 
+  status_code=`echo $response_alocaip | awk -F} '{print $NF}'`
+  if [[ $status_code != 200 ]]
+  then
+    echo "[ERROR] Ocorreu um erro na geração do IP status_code $status_code"
+    exit 1
+  else
+    ip_alocado=`echo "${response_alocaip::-3}" | jq -r '.Gerar[1]'`
+    ## Verificando se o IP alocado via AlocaIP já está configurado em algum projeto
+    for ips_saida in `oc get netnamespaces -o=jsonpath='{range .items[*]}{@.egressIPs}{"\n"}' | tr -sd [] '\n'`
+    do
+      if [[ $ips_saida == $ip_alocado ]]
+      then
+        projeto_ip=`oc get netnamespaces | grep $ip_alocado | awk '{print $1}'`
+        echo "[ERROR] O IP adquirido via alocaIP: $ip_alocado já está configurado para o projeto $projeto_ip no OKD"
+        exit 1
+      fi
+    done
+    echo "Configurando o IP de Saída: $ip_alocado para o projeto: $(PROJETO)-$(AMBIENTE)"
+    oc patch netnamespace $(PROJETO)-$(AMBIENTE) --type=merge -p '{"egressIPs": ["'$ip_alocado'"]}'
+  fi
+fi
+não, vamos precisar ajustar por Weydson Velasco de Azevedo
+09:45
+Weydson Velasco de Azevedo
+não, vamos precisar ajustar
+tem menu de contexto
