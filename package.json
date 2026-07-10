@@ -1,43 +1,187 @@
- oc get nodes
-NAME                                 STATUS                     ROLES                         AGE    VERSION
-control-plane-0.suportenuvem.caixa   Ready                      control-plane,master,worker   724d   v1.30.11
-control-plane-1.suportenuvem.caixa   Ready,SchedulingDisabled   control-plane,master,worker   724d   v1.30.11
-control-plane-2.suportenuvem.caixa   Ready                      control-plane,master,worker   724d   v1.30.11
-worker-0.suportenuvem.caixa          Ready                      worker                        724d   v1.30.11
-worker-1.suportenuvem.caixa          NotReady                   worker                        724d   v1.30.11
-[p940372@cadcllx004 ~]$ oc get co
-NAME                                       VERSION   AVAILABLE   PROGRESSING   DEGRADED   SINCE   MESSAGE
-authentication                             4.17.25   True        False         True       57m     APIServerDeploymentDegraded: 1 of 3 requested instances are unavailable for apiserver.openshift-oauth-apiserver ()...
-baremetal                                  4.17.25   True        False         False      724d
-cloud-controller-manager                   4.17.25   True        False         False      724d
-cloud-credential                           4.17.25   True        False         False      724d
-cluster-autoscaler                         4.17.25   True        False         False      724d
-config-operator                            4.17.25   True        False         False      724d
-console                                    4.17.25   True        False         False      55m
-control-plane-machine-set                  4.17.25   True        False         False      724d
-csi-snapshot-controller                    4.17.25   True        False         False      724d
-dns                                        4.17.25   True        True          False      724d    DNS "default" reports Progressing=True: "Have 4 available node-resolver pods, want 5."
-etcd                                       4.17.25   True        False         False      123m
-image-registry                             4.17.25   True        True          False      428d    Progressing: The registry is ready...
-ingress                                    4.17.25   True        False         False      716d
-insights                                   4.17.25   True        False         False      57m
-kube-apiserver                             4.17.25   True        False         False      724d
-kube-controller-manager                    4.17.25   True        False         False      724d
-kube-scheduler                             4.17.25   True        False         False      724d
-kube-storage-version-migrator              4.17.25   True        False         False      3h15m
-machine-api                                4.17.25   True        False         False      724d
-machine-approver                           4.17.25   True        False         False      724d
-machine-config                             4.17.25   True        False         True       724d    Failed to resync 4.17.25 because: error during syncRequiredMachineConfigPools: [context deadline exceeded, error required MachineConfigPool master is not ready, retrying. Status: (total: 3, ready 0, updated: 0, unavailable: 1, degraded: 0)]
-marketplace                                4.17.25   True        False         False      724d
-monitoring                                 4.17.25   False       True          True       11m     UpdatingPrometheusOperator: reconciling Prometheus Operator Admission Webhook Deployment failed: updating Deployment object failed: waiting for DeploymentRollout of openshift-monitoring/prometheus-operator-admission-webhook: context deadline exceeded: got 1 unavailable replicas
-network                                    4.17.25   True        True          False      724d    DaemonSet "/openshift-ovn-kubernetes/ovnkube-node" is not available (awaiting 1 nodes)...
-node-tuning                                4.17.25   True        True          False      428d    Working towards "4.17.25"
-openshift-apiserver                        4.17.25   True        True          True       3h44m   APIServerDeploymentDegraded: 1 of 3 requested instances are unavailable for apiserver.openshift-apiserver ()
-openshift-controller-manager               4.17.25   True        False         False      55m
-openshift-samples                          4.17.25   True        False         False      437d
-operator-lifecycle-manager                 4.17.25   True        False         False      724d
-operator-lifecycle-manager-catalog         4.17.25   True        False         False      724d
-operator-lifecycle-manager-packageserver   4.17.25   True        False         False      428d
-service-ca                                 4.17.25   True        False         False      724d
-storage                                    4.17.25   True        False         False      724d
+                                     UPDATED   UPDATING   DEGRADED   MACHINECOUNT   READYMACHINECOUNT   UPDATEDMACHINECOUNT   DEGRADEDMACHINECOUNT   AGE
+master   rendered-master-1f460f72baa835611a54ddcdd299c5db   False     True       True       3              1                   1                     1                      724d
+worker   rendered-worker-917f7a264d3b19f6501368eddf3372e2   False     True       False      2              1                   1                     0                      724d
+[p940372@cadcllx004 ~]$ oc describe mcp master
+Name:         master
+Namespace:
+Labels:       machineconfiguration.openshift.io/mco-built-in=
+              operator.machineconfiguration.openshift.io/required-for-upgrade=
+              pools.operator.machineconfiguration.openshift.io/master=
+Annotations:  <none>
+API Version:  machineconfiguration.openshift.io/v1
+Kind:         MachineConfigPool
+Metadata:
+  Creation Timestamp:  2024-07-16T16:52:43Z
+  Generation:          20
+  Resource Version:    2378909962
+  UID:                 6122126c-4e24-4585-b202-a27e749edde5
+Spec:
+  Configuration:
+    Name:  rendered-master-e993e105d3ca1c4e8948dcbdb968d1d3
+    Source:
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         00-master
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         00-override-master-generated-crio-default-container-runtime
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         01-control-plane-interface
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         01-master-container-runtime
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         01-master-kubelet
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         50-masters-chrony-configuration
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         97-master-generated-kubelet
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         98-master-generated-kubelet
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-assisted-installer-master-ssh
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-master-chrony
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-master-generated-kubelet
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-master-generated-registries
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-master-ipv4-ipv6-method-disabled
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-master-multipathing
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-master-ssh
+  Machine Config Selector:
+    Match Labels:
+      machineconfiguration.openshift.io/role:  master
+  Node Selector:
+    Match Labels:
+      node-role.kubernetes.io/master:
+  Paused:                              false
+Status:
+  Cert Expirys:
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2034-07-14T16:40:02Z
+    Subject:  CN=admin-kubeconfig-signer,OU=openshift
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-08-06T12:03:06Z
+    Subject:  CN=openshift-kube-controller-manager-operator_csr-signer-signer@1780833786
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-07-24T00:04:49Z
+    Subject:  CN=kube-csr-signer_@1782259489
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-08-08T00:05:33Z
+    Subject:  CN=kube-csr-signer_@1783555532
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-09-05T12:03:12Z
+    Subject:  CN=openshift-kube-controller-manager-operator_csr-signer-signer@1783425791
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2027-02-20T16:40:19Z
+    Subject:  CN=openshift-kube-apiserver-operator_kube-apiserver-to-kubelet-signer@1771605619
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-09-04T16:47:36Z
+    Subject:  CN=openshift-kube-apiserver-operator_kube-control-plane-signer@1783356456
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-08-05T16:47:18Z
+    Subject:  CN=openshift-kube-apiserver-operator_kube-control-plane-signer@1780764438
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2034-07-14T16:40:03Z
+    Subject:  CN=kubelet-bootstrap-kubeconfig-signer,OU=openshift
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2027-02-20T16:53:16Z
+    Subject:  CN=openshift-kube-apiserver-operator_node-system-admin-signer@1771606396
+  Conditions:
+    Last Transition Time:  2024-07-16T16:52:55Z
+    Message:
+    Reason:
+    Status:                False
+    Type:                  RenderDegraded
+    Last Transition Time:  2026-07-10T21:36:52Z
+    Message:
+    Reason:
+    Status:                False
+    Type:                  Updated
+    Last Transition Time:  2026-07-10T21:36:52Z
+    Message:               All nodes are updating to MachineConfig rendered-master-e993e105d3ca1c4e8948dcbdb968d1d3
+    Reason:
+    Status:                True
+    Type:                  Updating
+    Last Transition Time:  2026-07-10T23:42:26Z
+    Message:               Node control-plane-1.suportenuvem.caixa is reporting: "failed to drain node: control-plane-1.suportenuvem.caixa after 1 hour. Please see machine-config-controller logs for more information"
+    Reason:                1 nodes are reporting degraded status on sync
+    Status:                True
+    Type:                  NodeDegraded
+    Last Transition Time:  2026-07-10T23:42:26Z
+    Message:
+    Reason:
+    Status:                True
+    Type:                  Degraded
+  Configuration:
+    Name:  rendered-master-1f460f72baa835611a54ddcdd299c5db
+    Source:
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   00-master
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   00-override-master-generated-crio-default-container-runtime
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   01-control-plane-interface
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   01-master-container-runtime
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   01-master-kubelet
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   50-masters-chrony-configuration
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   97-master-generated-kubelet
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   98-master-generated-kubelet
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-assisted-installer-master-ssh
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-master-chrony
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-master-generated-kubelet
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-master-generated-registries
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-master-ipv4-ipv6-method-disabled
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-master-multipathing
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-master-ssh
+  Degraded Machine Count:     1
+  Machine Count:              3
+  Observed Generation:        20
+  Ready Machine Count:        1
+  Unavailable Machine Count:  1
+  Updated Machine Count:      1
+Events:                       <none>
 [p940372@cadcllx004 ~]$
