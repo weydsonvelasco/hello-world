@@ -1,16 +1,15 @@
-Subject: Technical guidance regarding OpenShift IPI deployment on vSphere using Cluster Datastore
+oc get nodes \
+-o custom-columns='NODE:.metadata.name,READY:.status.conditions[?(@.type=="Ready")].status,UNSCHEDULABLE:.spec.unschedulable,MCO_STATE:.metadata.annotations.machineconfiguration\.openshift\.io/state,CURRENT:.metadata.annotations.machineconfiguration\.openshift\.io/currentConfig,DESIRED:.metadata.annotations.machineconfiguration\.openshift\.io/desiredConfig,REASON:.metadata.annotations.machineconfiguration\.openshift\.io/reason'
 
-Hello Red Hat Support,
+oc get nodehealthcheck -A
+oc get selfnoderemediation -A
+oc get selfnoderemediationtemplate -A
+oc get machinedeletionremediation -A
 
-We would like to request technical guidance regarding the recommended architecture for deploying an OpenShift cluster using the Installer-Provisioned Infrastructure (IPI) method on VMware vSphere.
 
-Our questions are the following:
+oc get events -A --sort-by='.lastTimestamp' |
+grep -Ei 'worker-0|worker-1|medik8s|remediation|drain|unhealthy' |
+tail -100
 
-Cluster Datastore support
-Is it officially supported to deploy an OpenShift IPI cluster using a vSphere Cluster Datastore as the storage location for the virtual machines?
-Is this architecture recommended by Red Hat as a best practice for production environments?
-Are there any known limitations, risks, or operational considerations when using Cluster Datastore with OpenShift IPI?
-Multiple datastores
-If the control plane (master) virtual machines are distributed across different datastores within the same vSphere cluster, is this a supported architecture?
-Does Red Hat recommend keeping all control plane nodes on the same datastore, or is distributing them across multiple datastores considered a valid design?
-Are there any documented concerns regarding latency, storage consistency, etcd performance, or failure scenarios when the master nodes reside on different datastores?
+oc get node worker-0.suportenuvem.caixa -o yaml |
+grep -B5 -A10 -E 'medik8s|unschedulable|remediation'
