@@ -1,24 +1,7 @@
-oc logs -n openshift-machine-config-operator "$MCD" \
-  -c machine-config-daemon \
-  --since=6h |
-grep -iE 'error|failed|failure|drain|evict|reboot|degrad|mismatch|timeout|cordon'
-machine-config-daemon-65snn
-I0710 18:36:39.407610  124594 image_manager_helper.go:92] Running captured: systemctl list-units --state=failed --no-legend
-I0710 18:36:39.412896  124594 daemon.go:1778] systemctl --failed:
-● chrony-wait.service                loaded failed failed Wait for chrony to synchronize system clock
-● NetworkManager-wait-online.service loaded failed failed Network Manager Wait Online
-I0710 18:36:52.144504  124594 update.go:2623] "Update completed for config rendered-master-1f460f72baa835611a54ddcdd299c5db and node has been successfully uncordoned"
-I0710 19:42:21.031009  124594 update.go:790] Reboot
-I0710 19:42:21.032375  124594 drain.go:121] Checking drain required for node disruption actions
-I0710 19:42:21.032385  124594 update.go:1093] Drain calculated for node disruption: true for config rendered-master-e993e105d3ca1c4e8948dcbdb968d1d3
-I0710 19:42:21.032413  124594 update.go:2623] "Update prepared; requesting cordon and drain via annotation to controller"
-W0710 20:42:21.142380  124594 drain.go:93] Failed to get node: client rate limiter Wait returned an error: context deadline exceeded
-E0710 20:42:21.142555  124594 writer.go:226] Marking Degraded due to: "failed to drain node: control-plane-1.suportenuvem.caixa after 1 hour. Please see machine-config-controller logs for more information"
-I0710 20:42:21.227647  124594 daemon.go:809] A previously requested drain has not yet completed. Waiting for machine-config-controller to finish draining node.
-I0710 20:42:22.242468  124594 daemon.go:742] Transitioned from state: Working -> Degraded
-I0710 20:42:22.242485  124594 daemon.go:745] Transitioned from degraded/unreconcilable reason  -> failed to drain node: control-plane-1.suportenuvem.caixa after 1 hour. Please see machine-config-controller logs for more information
-I0710 20:42:22.242810  124594 daemon.go:809] A previously requested drain has not yet completed. Waiting for machine-config-controller to finish draining node.
-I0710 20:42:56.375843  124594 daemon.go:809] A previously requested drain has not yet completed. Waiting for machine-config-controller to finish draining node.
-I0710 20:44:38.669882  124594 daemon.go:809] A previously requested drain has not yet completed. Waiting for machine-config-controller to finish draining node.
-I0710 20:44:53.823654  124594 daemon.go:809] A previously requested drain has not yet completed. Waiting for machine-config-controller to finish draining node.
-[p940372@cadcllx004 ~]$
+oc logs -n openshift-machine-config-operator "$MCD"   -c machine-config-daemon   --since=6h | grep -iE 'error|failed|failure|drain|evict|reboot|degrad|mismatch|timeout|cordon'
+I0710 22:05:10.727164    5203 image_manager_helper.go:92] Running captured: systemctl list-units --state=failed --no-legend
+I0710 22:05:10.734109    5203 daemon.go:1778] systemctl --failed:
+● chrony-wait.service loaded failed failed Wait for chrony to synchronize system clock
+I0710 22:05:11.763548    5203 daemon.go:706] Detected Rebooting Annotation, applying MCN.
+I0710 22:05:11.849794    5203 daemon.go:1723] state: Degraded
+I0710 22:05:23.660221    5203 update.go:2623] "Update completed for config rendered-worker-fa4a4330065b85420962decea98ec5b5 and node has been successfully uncordoned"
