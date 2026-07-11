@@ -1,7 +1,678 @@
-oc logs -n openshift-machine-config-operator "$MCD"   -c machine-config-daemon   --since=6h | grep -iE 'error|failed|failure|drain|evict|reboot|degrad|mismatch|timeout|cordon'
-I0710 22:05:10.727164    5203 image_manager_helper.go:92] Running captured: systemctl list-units --state=failed --no-legend
-I0710 22:05:10.734109    5203 daemon.go:1778] systemctl --failed:
-● chrony-wait.service loaded failed failed Wait for chrony to synchronize system clock
-I0710 22:05:11.763548    5203 daemon.go:706] Detected Rebooting Annotation, applying MCN.
-I0710 22:05:11.849794    5203 daemon.go:1723] state: Degraded
-I0710 22:05:23.660221    5203 update.go:2623] "Update completed for config rendered-worker-fa4a4330065b85420962decea98ec5b5 and node has been successfully uncordoned"
+oc describe node worker-0.suportenuvem.caixa
+Name:               worker-0.suportenuvem.caixa
+Roles:              worker
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    cpu-feature.node.kubevirt.io/3dnowprefetch=true
+                    cpu-feature.node.kubevirt.io/abm=true
+                    cpu-feature.node.kubevirt.io/adx=true
+                    cpu-feature.node.kubevirt.io/aes=true
+                    cpu-feature.node.kubevirt.io/amd-ssbd=true
+                    cpu-feature.node.kubevirt.io/amd-stibp=true
+                    cpu-feature.node.kubevirt.io/apic=true
+                    cpu-feature.node.kubevirt.io/arat=true
+                    cpu-feature.node.kubevirt.io/arch-capabilities=true
+                    cpu-feature.node.kubevirt.io/avx=true
+                    cpu-feature.node.kubevirt.io/avx2=true
+                    cpu-feature.node.kubevirt.io/avx512-vpopcntdq=true
+                    cpu-feature.node.kubevirt.io/avx512bitalg=true
+                    cpu-feature.node.kubevirt.io/avx512bw=true
+                    cpu-feature.node.kubevirt.io/avx512cd=true
+                    cpu-feature.node.kubevirt.io/avx512dq=true
+                    cpu-feature.node.kubevirt.io/avx512f=true
+                    cpu-feature.node.kubevirt.io/avx512ifma=true
+                    cpu-feature.node.kubevirt.io/avx512vbmi=true
+                    cpu-feature.node.kubevirt.io/avx512vbmi2=true
+                    cpu-feature.node.kubevirt.io/avx512vl=true
+                    cpu-feature.node.kubevirt.io/avx512vnni=true
+                    cpu-feature.node.kubevirt.io/bmi1=true
+                    cpu-feature.node.kubevirt.io/bmi2=true
+                    cpu-feature.node.kubevirt.io/clflush=true
+                    cpu-feature.node.kubevirt.io/clflushopt=true
+                    cpu-feature.node.kubevirt.io/clwb=true
+                    cpu-feature.node.kubevirt.io/cmov=true
+                    cpu-feature.node.kubevirt.io/cx16=true
+                    cpu-feature.node.kubevirt.io/cx8=true
+                    cpu-feature.node.kubevirt.io/de=true
+                    cpu-feature.node.kubevirt.io/ds=true
+                    cpu-feature.node.kubevirt.io/dtes64=true
+                    cpu-feature.node.kubevirt.io/erms=true
+                    cpu-feature.node.kubevirt.io/f16c=true
+                    cpu-feature.node.kubevirt.io/fb-clear=true
+                    cpu-feature.node.kubevirt.io/flush-l1d=true
+                    cpu-feature.node.kubevirt.io/fma=true
+                    cpu-feature.node.kubevirt.io/fpu=true
+                    cpu-feature.node.kubevirt.io/fsgsbase=true
+                    cpu-feature.node.kubevirt.io/fsrm=true
+                    cpu-feature.node.kubevirt.io/fxsr=true
+                    cpu-feature.node.kubevirt.io/gds-no=true
+                    cpu-feature.node.kubevirt.io/gfni=true
+                    cpu-feature.node.kubevirt.io/hypervisor=true
+                    cpu-feature.node.kubevirt.io/ibpb=true
+                    cpu-feature.node.kubevirt.io/ibrs=true
+                    cpu-feature.node.kubevirt.io/ibrs-all=true
+                    cpu-feature.node.kubevirt.io/invpcid=true
+                    cpu-feature.node.kubevirt.io/invtsc=true
+                    cpu-feature.node.kubevirt.io/la57=true
+                    cpu-feature.node.kubevirt.io/lahf_lm=true
+                    cpu-feature.node.kubevirt.io/lm=true
+                    cpu-feature.node.kubevirt.io/mca=true
+                    cpu-feature.node.kubevirt.io/mce=true
+                    cpu-feature.node.kubevirt.io/md-clear=true
+                    cpu-feature.node.kubevirt.io/mds-no=true
+                    cpu-feature.node.kubevirt.io/mmx=true
+                    cpu-feature.node.kubevirt.io/movbe=true
+                    cpu-feature.node.kubevirt.io/msr=true
+                    cpu-feature.node.kubevirt.io/mtrr=true
+                    cpu-feature.node.kubevirt.io/nx=true
+                    cpu-feature.node.kubevirt.io/pae=true
+                    cpu-feature.node.kubevirt.io/pat=true
+                    cpu-feature.node.kubevirt.io/pcid=true
+                    cpu-feature.node.kubevirt.io/pclmuldq=true
+                    cpu-feature.node.kubevirt.io/pdcm=true
+                    cpu-feature.node.kubevirt.io/pdpe1gb=true
+                    cpu-feature.node.kubevirt.io/pge=true
+                    cpu-feature.node.kubevirt.io/pku=true
+                    cpu-feature.node.kubevirt.io/pni=true
+                    cpu-feature.node.kubevirt.io/popcnt=true
+                    cpu-feature.node.kubevirt.io/pschange-mc-no=true
+                    cpu-feature.node.kubevirt.io/psdp-no=true
+                    cpu-feature.node.kubevirt.io/pse=true
+                    cpu-feature.node.kubevirt.io/pse36=true
+                    cpu-feature.node.kubevirt.io/rdctl-no=true
+                    cpu-feature.node.kubevirt.io/rdpid=true
+                    cpu-feature.node.kubevirt.io/rdrand=true
+                    cpu-feature.node.kubevirt.io/rdseed=true
+                    cpu-feature.node.kubevirt.io/rdtscp=true
+                    cpu-feature.node.kubevirt.io/sbdr-ssdp-no=true
+                    cpu-feature.node.kubevirt.io/sep=true
+                    cpu-feature.node.kubevirt.io/sha-ni=true
+                    cpu-feature.node.kubevirt.io/skip-l1dfl-vmentry=true
+                    cpu-feature.node.kubevirt.io/smap=true
+                    cpu-feature.node.kubevirt.io/smep=true
+                    cpu-feature.node.kubevirt.io/spec-ctrl=true
+                    cpu-feature.node.kubevirt.io/ss=true
+                    cpu-feature.node.kubevirt.io/ssbd=true
+                    cpu-feature.node.kubevirt.io/sse=true
+                    cpu-feature.node.kubevirt.io/sse2=true
+                    cpu-feature.node.kubevirt.io/sse4.1=true
+                    cpu-feature.node.kubevirt.io/sse4.2=true
+                    cpu-feature.node.kubevirt.io/ssse3=true
+                    cpu-feature.node.kubevirt.io/stibp=true
+                    cpu-feature.node.kubevirt.io/syscall=true
+                    cpu-feature.node.kubevirt.io/tsc=true
+                    cpu-feature.node.kubevirt.io/tsc-deadline=true
+                    cpu-feature.node.kubevirt.io/tsc_adjust=true
+                    cpu-feature.node.kubevirt.io/tsx-ctrl=true
+                    cpu-feature.node.kubevirt.io/umip=true
+                    cpu-feature.node.kubevirt.io/vaes=true
+                    cpu-feature.node.kubevirt.io/vme=true
+                    cpu-feature.node.kubevirt.io/vmx=true
+                    cpu-feature.node.kubevirt.io/vmx-activity-hlt=true
+                    cpu-feature.node.kubevirt.io/vmx-activity-wait-sipi=true
+                    cpu-feature.node.kubevirt.io/vmx-apicv-register=true
+                    cpu-feature.node.kubevirt.io/vmx-apicv-vid=true
+                    cpu-feature.node.kubevirt.io/vmx-apicv-x2apic=true
+                    cpu-feature.node.kubevirt.io/vmx-apicv-xapic=true
+                    cpu-feature.node.kubevirt.io/vmx-cr3-load-noexit=true
+                    cpu-feature.node.kubevirt.io/vmx-cr3-store-noexit=true
+                    cpu-feature.node.kubevirt.io/vmx-cr8-load-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-cr8-store-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-desc-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-entry-ia32e-mode=true
+                    cpu-feature.node.kubevirt.io/vmx-entry-load-efer=true
+                    cpu-feature.node.kubevirt.io/vmx-entry-load-pat=true
+                    cpu-feature.node.kubevirt.io/vmx-entry-load-perf-global-ctrl=true
+                    cpu-feature.node.kubevirt.io/vmx-entry-noload-debugctl=true
+                    cpu-feature.node.kubevirt.io/vmx-ept=true
+                    cpu-feature.node.kubevirt.io/vmx-ept-1gb=true
+                    cpu-feature.node.kubevirt.io/vmx-ept-2mb=true
+                    cpu-feature.node.kubevirt.io/vmx-ept-execonly=true
+                    cpu-feature.node.kubevirt.io/vmx-eptad=true
+                    cpu-feature.node.kubevirt.io/vmx-eptp-switching=true
+                    cpu-feature.node.kubevirt.io/vmx-exit-ack-intr=true
+                    cpu-feature.node.kubevirt.io/vmx-exit-load-efer=true
+                    cpu-feature.node.kubevirt.io/vmx-exit-load-pat=true
+                    cpu-feature.node.kubevirt.io/vmx-exit-load-perf-global-ctrl=true
+                    cpu-feature.node.kubevirt.io/vmx-exit-nosave-debugctl=true
+                    cpu-feature.node.kubevirt.io/vmx-exit-save-efer=true
+                    cpu-feature.node.kubevirt.io/vmx-exit-save-pat=true
+                    cpu-feature.node.kubevirt.io/vmx-exit-save-preemption-timer=true
+                    cpu-feature.node.kubevirt.io/vmx-flexpriority=true
+                    cpu-feature.node.kubevirt.io/vmx-hlt-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-ins-outs=true
+                    cpu-feature.node.kubevirt.io/vmx-intr-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-invept=true
+                    cpu-feature.node.kubevirt.io/vmx-invept-all-context=true
+                    cpu-feature.node.kubevirt.io/vmx-invept-single-context=true
+                    cpu-feature.node.kubevirt.io/vmx-invlpg-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-invpcid-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-invvpid=true
+                    cpu-feature.node.kubevirt.io/vmx-invvpid-all-context=true
+                    cpu-feature.node.kubevirt.io/vmx-invvpid-single-addr=true
+                    cpu-feature.node.kubevirt.io/vmx-io-bitmap=true
+                    cpu-feature.node.kubevirt.io/vmx-io-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-monitor-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-movdr-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-msr-bitmap=true
+                    cpu-feature.node.kubevirt.io/vmx-mtf=true
+                    cpu-feature.node.kubevirt.io/vmx-mwait-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-nmi-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-page-walk-4=true
+                    cpu-feature.node.kubevirt.io/vmx-page-walk-5=true
+                    cpu-feature.node.kubevirt.io/vmx-pause-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-pml=true
+                    cpu-feature.node.kubevirt.io/vmx-posted-intr=true
+                    cpu-feature.node.kubevirt.io/vmx-preemption-timer=true
+                    cpu-feature.node.kubevirt.io/vmx-rdpmc-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-rdrand-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-rdseed-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-rdtsc-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-rdtscp-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-secondary-ctls=true
+                    cpu-feature.node.kubevirt.io/vmx-shadow-vmcs=true
+                    cpu-feature.node.kubevirt.io/vmx-store-lma=true
+                    cpu-feature.node.kubevirt.io/vmx-true-ctls=true
+                    cpu-feature.node.kubevirt.io/vmx-tsc-offset=true
+                    cpu-feature.node.kubevirt.io/vmx-tsc-scaling=true
+                    cpu-feature.node.kubevirt.io/vmx-unrestricted-guest=true
+                    cpu-feature.node.kubevirt.io/vmx-vintr-pending=true
+                    cpu-feature.node.kubevirt.io/vmx-vmfunc=true
+                    cpu-feature.node.kubevirt.io/vmx-vmwrite-vmexit-fields=true
+                    cpu-feature.node.kubevirt.io/vmx-vnmi=true
+                    cpu-feature.node.kubevirt.io/vmx-vnmi-pending=true
+                    cpu-feature.node.kubevirt.io/vmx-vpid=true
+                    cpu-feature.node.kubevirt.io/vmx-wbinvd-exit=true
+                    cpu-feature.node.kubevirt.io/vmx-xsaves=true
+                    cpu-feature.node.kubevirt.io/vpclmulqdq=true
+                    cpu-feature.node.kubevirt.io/wbnoinvd=true
+                    cpu-feature.node.kubevirt.io/x2apic=true
+                    cpu-feature.node.kubevirt.io/xgetbv1=true
+                    cpu-feature.node.kubevirt.io/xsave=true
+                    cpu-feature.node.kubevirt.io/xsavec=true
+                    cpu-feature.node.kubevirt.io/xsaveopt=true
+                    cpu-feature.node.kubevirt.io/xsaves=true
+                    cpu-model-migration.node.kubevirt.io/Broadwell-noTSX=true
+                    cpu-model-migration.node.kubevirt.io/Broadwell-noTSX-IBRS=true
+                    cpu-model-migration.node.kubevirt.io/Cascadelake-Server-noTSX=true
+                    cpu-model-migration.node.kubevirt.io/Haswell-noTSX=true
+                    cpu-model-migration.node.kubevirt.io/Haswell-noTSX-IBRS=true
+                    cpu-model-migration.node.kubevirt.io/Icelake-Server=true
+                    cpu-model-migration.node.kubevirt.io/Icelake-Server-noTSX=true
+                    cpu-model-migration.node.kubevirt.io/IvyBridge=true
+                    cpu-model-migration.node.kubevirt.io/IvyBridge-IBRS=true
+                    cpu-model-migration.node.kubevirt.io/Nehalem=true
+                    cpu-model-migration.node.kubevirt.io/Nehalem-IBRS=true
+                    cpu-model-migration.node.kubevirt.io/Penryn=true
+                    cpu-model-migration.node.kubevirt.io/SandyBridge=true
+                    cpu-model-migration.node.kubevirt.io/SandyBridge-IBRS=true
+                    cpu-model-migration.node.kubevirt.io/Skylake-Client-noTSX-IBRS=true
+                    cpu-model-migration.node.kubevirt.io/Skylake-Server-noTSX-IBRS=true
+                    cpu-model-migration.node.kubevirt.io/Westmere=true
+                    cpu-model-migration.node.kubevirt.io/Westmere-IBRS=true
+                    cpu-model.node.kubevirt.io/Broadwell-noTSX=true
+                    cpu-model.node.kubevirt.io/Broadwell-noTSX-IBRS=true
+                    cpu-model.node.kubevirt.io/Cascadelake-Server-noTSX=true
+                    cpu-model.node.kubevirt.io/Haswell-noTSX=true
+                    cpu-model.node.kubevirt.io/Haswell-noTSX-IBRS=true
+                    cpu-model.node.kubevirt.io/Icelake-Server-noTSX=true
+                    cpu-model.node.kubevirt.io/IvyBridge=true
+                    cpu-model.node.kubevirt.io/IvyBridge-IBRS=true
+                    cpu-model.node.kubevirt.io/Nehalem=true
+                    cpu-model.node.kubevirt.io/Nehalem-IBRS=true
+                    cpu-model.node.kubevirt.io/Penryn=true
+                    cpu-model.node.kubevirt.io/SandyBridge=true
+                    cpu-model.node.kubevirt.io/SandyBridge-IBRS=true
+                    cpu-model.node.kubevirt.io/Skylake-Client-noTSX-IBRS=true
+                    cpu-model.node.kubevirt.io/Skylake-Server-noTSX-IBRS=true
+                    cpu-model.node.kubevirt.io/Westmere=true
+                    cpu-model.node.kubevirt.io/Westmere-IBRS=true
+                    cpu-timer.node.kubevirt.io/tsc-frequency=3599999000
+                    cpu-timer.node.kubevirt.io/tsc-scalable=true
+                    cpu-vendor.node.kubevirt.io/Intel=true
+                    cpumanager=false
+                    host-model-cpu.node.kubevirt.io/Icelake-Server=true
+                    host-model-required-features.node.kubevirt.io/amd-ssbd=true
+                    host-model-required-features.node.kubevirt.io/amd-stibp=true
+                    host-model-required-features.node.kubevirt.io/arch-capabilities=true
+                    host-model-required-features.node.kubevirt.io/avx512ifma=true
+                    host-model-required-features.node.kubevirt.io/ds=true
+                    host-model-required-features.node.kubevirt.io/dtes64=true
+                    host-model-required-features.node.kubevirt.io/fb-clear=true
+                    host-model-required-features.node.kubevirt.io/flush-l1d=true
+                    host-model-required-features.node.kubevirt.io/fsrm=true
+                    host-model-required-features.node.kubevirt.io/gds-no=true
+                    host-model-required-features.node.kubevirt.io/hypervisor=true
+                    host-model-required-features.node.kubevirt.io/ibpb=true
+                    host-model-required-features.node.kubevirt.io/ibrs=true
+                    host-model-required-features.node.kubevirt.io/ibrs-all=true
+                    host-model-required-features.node.kubevirt.io/invtsc=true
+                    host-model-required-features.node.kubevirt.io/md-clear=true
+                    host-model-required-features.node.kubevirt.io/mds-no=true
+                    host-model-required-features.node.kubevirt.io/pdcm=true
+                    host-model-required-features.node.kubevirt.io/pschange-mc-no=true
+                    host-model-required-features.node.kubevirt.io/psdp-no=true
+                    host-model-required-features.node.kubevirt.io/rdctl-no=true
+                    host-model-required-features.node.kubevirt.io/rdpid=true
+                    host-model-required-features.node.kubevirt.io/sbdr-ssdp-no=true
+                    host-model-required-features.node.kubevirt.io/sha-ni=true
+                    host-model-required-features.node.kubevirt.io/skip-l1dfl-vmentry=true
+                    host-model-required-features.node.kubevirt.io/ss=true
+                    host-model-required-features.node.kubevirt.io/stibp=true
+                    host-model-required-features.node.kubevirt.io/tsc_adjust=true
+                    host-model-required-features.node.kubevirt.io/tsx-ctrl=true
+                    host-model-required-features.node.kubevirt.io/vmx=true
+                    host-model-required-features.node.kubevirt.io/vmx-activity-hlt=true
+                    host-model-required-features.node.kubevirt.io/vmx-activity-wait-sipi=true
+                    host-model-required-features.node.kubevirt.io/vmx-apicv-register=true
+                    host-model-required-features.node.kubevirt.io/vmx-apicv-vid=true
+                    host-model-required-features.node.kubevirt.io/vmx-apicv-x2apic=true
+                    host-model-required-features.node.kubevirt.io/vmx-apicv-xapic=true
+                    host-model-required-features.node.kubevirt.io/vmx-cr3-load-noexit=true
+                    host-model-required-features.node.kubevirt.io/vmx-cr3-store-noexit=true
+                    host-model-required-features.node.kubevirt.io/vmx-cr8-load-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-cr8-store-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-desc-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-entry-ia32e-mode=true
+                    host-model-required-features.node.kubevirt.io/vmx-entry-load-efer=true
+                    host-model-required-features.node.kubevirt.io/vmx-entry-load-pat=true
+                    host-model-required-features.node.kubevirt.io/vmx-entry-load-perf-global-ctrl=true
+                    host-model-required-features.node.kubevirt.io/vmx-entry-noload-debugctl=true
+                    host-model-required-features.node.kubevirt.io/vmx-ept=true
+                    host-model-required-features.node.kubevirt.io/vmx-ept-1gb=true
+                    host-model-required-features.node.kubevirt.io/vmx-ept-2mb=true
+                    host-model-required-features.node.kubevirt.io/vmx-ept-execonly=true
+                    host-model-required-features.node.kubevirt.io/vmx-eptad=true
+                    host-model-required-features.node.kubevirt.io/vmx-eptp-switching=true
+                    host-model-required-features.node.kubevirt.io/vmx-exit-ack-intr=true
+                    host-model-required-features.node.kubevirt.io/vmx-exit-load-efer=true
+                    host-model-required-features.node.kubevirt.io/vmx-exit-load-pat=true
+                    host-model-required-features.node.kubevirt.io/vmx-exit-load-perf-global-ctrl=true
+                    host-model-required-features.node.kubevirt.io/vmx-exit-nosave-debugctl=true
+                    host-model-required-features.node.kubevirt.io/vmx-exit-save-efer=true
+                    host-model-required-features.node.kubevirt.io/vmx-exit-save-pat=true
+                    host-model-required-features.node.kubevirt.io/vmx-exit-save-preemption-timer=true
+                    host-model-required-features.node.kubevirt.io/vmx-flexpriority=true
+                    host-model-required-features.node.kubevirt.io/vmx-hlt-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-ins-outs=true
+                    host-model-required-features.node.kubevirt.io/vmx-intr-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-invept=true
+                    host-model-required-features.node.kubevirt.io/vmx-invept-all-context=true
+                    host-model-required-features.node.kubevirt.io/vmx-invept-single-context=true
+                    host-model-required-features.node.kubevirt.io/vmx-invlpg-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-invpcid-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-invvpid=true
+                    host-model-required-features.node.kubevirt.io/vmx-invvpid-all-context=true
+                    host-model-required-features.node.kubevirt.io/vmx-invvpid-single-addr=true
+                    host-model-required-features.node.kubevirt.io/vmx-io-bitmap=true
+                    host-model-required-features.node.kubevirt.io/vmx-io-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-monitor-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-movdr-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-msr-bitmap=true
+                    host-model-required-features.node.kubevirt.io/vmx-mtf=true
+                    host-model-required-features.node.kubevirt.io/vmx-mwait-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-nmi-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-page-walk-4=true
+                    host-model-required-features.node.kubevirt.io/vmx-page-walk-5=true
+                    host-model-required-features.node.kubevirt.io/vmx-pause-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-pml=true
+                    host-model-required-features.node.kubevirt.io/vmx-posted-intr=true
+                    host-model-required-features.node.kubevirt.io/vmx-preemption-timer=true
+                    host-model-required-features.node.kubevirt.io/vmx-rdpmc-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-rdrand-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-rdseed-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-rdtsc-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-rdtscp-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-secondary-ctls=true
+                    host-model-required-features.node.kubevirt.io/vmx-shadow-vmcs=true
+                    host-model-required-features.node.kubevirt.io/vmx-store-lma=true
+                    host-model-required-features.node.kubevirt.io/vmx-true-ctls=true
+                    host-model-required-features.node.kubevirt.io/vmx-tsc-offset=true
+                    host-model-required-features.node.kubevirt.io/vmx-tsc-scaling=true
+                    host-model-required-features.node.kubevirt.io/vmx-unrestricted-guest=true
+                    host-model-required-features.node.kubevirt.io/vmx-vintr-pending=true
+                    host-model-required-features.node.kubevirt.io/vmx-vmfunc=true
+                    host-model-required-features.node.kubevirt.io/vmx-vmwrite-vmexit-fields=true
+                    host-model-required-features.node.kubevirt.io/vmx-vnmi=true
+                    host-model-required-features.node.kubevirt.io/vmx-vnmi-pending=true
+                    host-model-required-features.node.kubevirt.io/vmx-vpid=true
+                    host-model-required-features.node.kubevirt.io/vmx-wbinvd-exit=true
+                    host-model-required-features.node.kubevirt.io/vmx-xsaves=true
+                    host-model-required-features.node.kubevirt.io/xsaves=true
+                    hyperv.node.kubevirt.io/base=true
+                    hyperv.node.kubevirt.io/frequencies=true
+                    hyperv.node.kubevirt.io/ipi=true
+                    hyperv.node.kubevirt.io/reenlightenment=true
+                    hyperv.node.kubevirt.io/reset=true
+                    hyperv.node.kubevirt.io/runtime=true
+                    hyperv.node.kubevirt.io/synic=true
+                    hyperv.node.kubevirt.io/synic2=true
+                    hyperv.node.kubevirt.io/synictimer=true
+                    hyperv.node.kubevirt.io/time=true
+                    hyperv.node.kubevirt.io/tlbflush=true
+                    hyperv.node.kubevirt.io/vpindex=true
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=worker-0.suportenuvem.caixa
+                    kubernetes.io/os=linux
+                    kubevirt.io/ksm-enabled=false
+                    kubevirt.io/schedulable=false
+                    node-role.kubernetes.io/worker=
+                    node.openshift.io/os_id=rhcos
+                    remediation.medik8s.io/exclude-from-remediation=true
+                    scheduling.node.kubevirt.io/tsc-frequency-3599998000=true
+                    scheduling.node.kubevirt.io/tsc-frequency-3599999000=true
+Annotations:        k8s.ovn.org/host-cidrs: ["10.190.32.25/19"]
+                    k8s.ovn.org/l3-gateway-config:
+                      {"default":{"mode":"shared","bridge-id":"br-ex","interface-id":"br-ex_worker-0.suportenuvem.caixa","mac-address":"50:7c:6f:43:59:c5","ip-a...
+                    k8s.ovn.org/network-ids: {"default":"0"}
+                    k8s.ovn.org/node-chassis-id: c3ff2f2a-69ab-4add-bf4d-5e095324e905
+                    k8s.ovn.org/node-gateway-router-lrp-ifaddr: {"ipv4":"100.64.0.4/16"}
+                    k8s.ovn.org/node-gateway-router-lrp-ifaddrs: {"default":{"ipv4":"100.64.0.4/16"}}
+                    k8s.ovn.org/node-id: 4
+                    k8s.ovn.org/node-masquerade-subnet: {"ipv4":"169.254.169.0/29","ipv6":"fd69::/125"}
+                    k8s.ovn.org/node-mgmt-port-mac-address: 76:f0:5f:de:15:56
+                    k8s.ovn.org/node-mgmt-port-mac-addresses: {"default":"76:f0:5f:de:15:56"}
+                    k8s.ovn.org/node-primary-ifaddr: {"ipv4":"10.190.32.25/19"}
+                    k8s.ovn.org/node-subnets: {"default":["10.130.0.0/23"]}
+                    k8s.ovn.org/node-transit-switch-port-ifaddr: {"ipv4":"100.88.0.4/16"}
+                    k8s.ovn.org/remote-zone-migrated: worker-0.suportenuvem.caixa
+                    k8s.ovn.org/zone-name: worker-0.suportenuvem.caixa
+                    kubevirt.io/heartbeat: 2025-05-06T19:47:32Z
+                    kubevirt.io/ksm-handler-managed: false
+                    machine.openshift.io/machine: openshift-machine-api/suportenuvem-5z6k9-worker-0-2m6lj
+                    machineconfiguration.openshift.io/controlPlaneTopology: HighlyAvailable
+                    machineconfiguration.openshift.io/currentConfig: rendered-worker-fa4a4330065b85420962decea98ec5b5
+                    machineconfiguration.openshift.io/desiredConfig: rendered-worker-fa4a4330065b85420962decea98ec5b5
+                    machineconfiguration.openshift.io/desiredDrain: uncordon-rendered-worker-fa4a4330065b85420962decea98ec5b5
+                    machineconfiguration.openshift.io/lastAppliedDrain: uncordon-rendered-worker-fa4a4330065b85420962decea98ec5b5
+                    machineconfiguration.openshift.io/lastObservedServerCAAnnotation: false
+                    machineconfiguration.openshift.io/lastSyncedControllerConfigResourceVersion: 2379132180
+                    machineconfiguration.openshift.io/post-config-action:
+                    machineconfiguration.openshift.io/reason:
+                    machineconfiguration.openshift.io/state: Done
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Tue, 16 Jul 2024 14:05:51 -0300
+Taints:             medik8s.io/drain:NoSchedule
+                    node.kubernetes.io/unschedulable:NoSchedule
+Unschedulable:      true
+Lease:
+  HolderIdentity:  worker-0.suportenuvem.caixa
+  AcquireTime:     <unset>
+  RenewTime:       Fri, 10 Jul 2026 22:17:48 -0300
+Conditions:
+  Type             Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----             ------  -----------------                 ------------------                ------                       -------
+  MemoryPressure   False   Fri, 10 Jul 2026 22:13:28 -0300   Fri, 10 Jul 2026 20:25:57 -0300   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure     False   Fri, 10 Jul 2026 22:13:28 -0300   Fri, 10 Jul 2026 20:25:57 -0300   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure      False   Fri, 10 Jul 2026 22:13:28 -0300   Fri, 10 Jul 2026 20:25:57 -0300   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready            True    Fri, 10 Jul 2026 22:13:28 -0300   Fri, 10 Jul 2026 20:26:08 -0300   KubeletReady                 kubelet is posting ready status
+Addresses:
+  InternalIP:  10.190.32.25
+  Hostname:    worker-0.suportenuvem.caixa
+Capacity:
+  cpu:                            32
+  devices.kubevirt.io/kvm:        0
+  devices.kubevirt.io/pr-helper:  0
+  devices.kubevirt.io/tun:        0
+  devices.kubevirt.io/vhost-net:  0
+  ephemeral-storage:              1560235664Ki
+  hugepages-1Gi:                  0
+  hugepages-2Mi:                  0
+  memory:                         527923488Ki
+  pods:                           500
+Allocatable:
+  cpu:                            31850m
+  devices.kubevirt.io/kvm:        0
+  devices.kubevirt.io/pr-helper:  0
+  devices.kubevirt.io/tun:        0
+  devices.kubevirt.io/vhost-net:  0
+  ephemeral-storage:              1436839443738
+  hugepages-1Gi:                  0
+  hugepages-2Mi:                  0
+  memory:                         509995296Ki
+  pods:                           500
+System Info:
+  Machine ID:                             889dce54f83247b28c8608caa3483ab2
+  System UUID:                            79c17dbb-3473-ab92-ee11-930e9c476723
+  Boot ID:                                45d13006-db9f-4502-9eac-cd5e426cb182
+  Kernel Version:                         5.14.0-427.64.1.el9_4.x86_64
+  OS Image:                               Red Hat Enterprise Linux CoreOS 417.94.202504080421-0
+  Operating System:                       linux
+  Architecture:                           amd64
+  Container Runtime Version:              cri-o://1.30.11-2.rhaos4.17.git9e4d86d.el9
+  Kubelet Version:                        v1.30.11
+  Kube-Proxy Version:                     v1.30.11
+ProviderID:                               baremetalhost:///openshift-machine-api/worker-0.suportenuvem.caixa/55a42a06-a0ad-42e6-b729-841300041d5d
+Non-terminated Pods:                      (18 in total)
+  Namespace                               Name                                                CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                               ----                                                ------------  ----------  ---------------  -------------  ---
+  openshift-cluster-node-tuning-operator  tuned-bn8h2                                         10m (0%)      0 (0%)      50Mi (0%)        0 (0%)         429d
+  openshift-dns                           dns-default-cn8cw                                   60m (0%)      0 (0%)      110Mi (0%)       0 (0%)         430d
+  openshift-dns                           node-resolver-vds7f                                 5m (0%)       0 (0%)      21Mi (0%)        0 (0%)         437d
+  openshift-image-registry                node-ca-zkw4n                                       10m (0%)      0 (0%)      10Mi (0%)        0 (0%)         437d
+  openshift-ingress-canary                ingress-canary-vpflk                                10m (0%)      0 (0%)      20Mi (0%)        0 (0%)         430d
+  openshift-kni-infra                     coredns-worker-0.suportenuvem.caixa                 200m (0%)     0 (0%)      400Mi (0%)       0 (0%)         437d
+  openshift-kni-infra                     keepalived-worker-0.suportenuvem.caixa              200m (0%)     0 (0%)      400Mi (0%)       0 (0%)         437d
+  openshift-local-storage                 diskmaker-discovery-9znvx                           20m (0%)      0 (0%)      70Mi (0%)        0 (0%)         51m
+  openshift-machine-config-operator       kube-rbac-proxy-crio-worker-0.suportenuvem.caixa    20m (0%)      0 (0%)      50Mi (0%)        0 (0%)         437d
+  openshift-machine-config-operator       machine-config-daemon-ttxw4                         40m (0%)      0 (0%)      100Mi (0%)       0 (0%)         3h41m
+  openshift-monitoring                    node-exporter-lqp86                                 9m (0%)       0 (0%)      47Mi (0%)        0 (0%)         437d
+  openshift-multus                        multus-additional-cni-plugins-7v2dj                 10m (0%)      0 (0%)      10Mi (0%)        0 (0%)         437d
+  openshift-multus                        multus-q5rhl                                        10m (0%)      0 (0%)      65Mi (0%)        0 (0%)         437d
+  openshift-multus                        network-metrics-daemon-m96kk                        20m (0%)      0 (0%)      120Mi (0%)       0 (0%)         437d
+  openshift-network-diagnostics           network-check-target-k29s4                          10m (0%)      0 (0%)      15Mi (0%)        0 (0%)         437d
+  openshift-network-operator              iptables-alerter-4mwtd                              10m (0%)      10m (0%)    65Mi (0%)        0 (0%)         430d
+  openshift-nmstate                       nmstate-handler-bkgf9                               100m (0%)     0 (0%)      100Mi (0%)       0 (0%)         527d
+  openshift-ovn-kubernetes                ovnkube-node-gf6qc                                  80m (0%)      0 (0%)      1630Mi (0%)      0 (0%)         437d
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource                       Requests     Limits
+  --------                       --------     ------
+  cpu                            824m (2%)    10m (0%)
+  memory                         3283Mi (0%)  0 (0%)
+  ephemeral-storage              0 (0%)       0 (0%)
+  hugepages-1Gi                  0 (0%)       0 (0%)
+  hugepages-2Mi                  0 (0%)       0 (0%)
+  devices.kubevirt.io/kvm        0            0
+  devices.kubevirt.io/pr-helper  0            0
+  devices.kubevirt.io/tun        0            0
+  devices.kubevirt.io/vhost-net  0            0
+Events:
+  Type    Reason                   Age                  From             Message
+  ----    ------                   ----                 ----             -------
+  Normal  RegisteredNode           3h39m                node-controller  Node worker-0.suportenuvem.caixa event: Registered Node worker-0.suportenuvem.caixa in Controller
+  Normal  RegisteredNode           3h38m                node-controller  Node worker-0.suportenuvem.caixa event: Registered Node worker-0.suportenuvem.caixa in Controller
+  Normal  RegisteredNode           3h35m                node-controller  Node worker-0.suportenuvem.caixa event: Registered Node worker-0.suportenuvem.caixa in Controller
+  Normal  RegisteredNode           3h7m                 node-controller  Node worker-0.suportenuvem.caixa event: Registered Node worker-0.suportenuvem.caixa in Controller
+  Normal  NodeHasSufficientPID     152m (x7 over 152m)  kubelet          Node worker-0.suportenuvem.caixa status is now: NodeHasSufficientPID
+  Normal  NodeAllocatableEnforced  152m                 kubelet          Updated Node Allocatable limit across pods
+  Normal  Starting                 152m                 kubelet          Starting kubelet.
+  Normal  NodeHasSufficientMemory  152m (x8 over 152m)  kubelet          Node worker-0.suportenuvem.caixa status is now: NodeHasSufficientMemory
+  Normal  NodeHasNoDiskPressure    152m (x8 over 152m)  kubelet          Node worker-0.suportenuvem.caixa status is now: NodeHasNoDiskPressure
+  Normal  NodeSchedulable          118m (x2 over 151m)  kubelet          Node worker-0.suportenuvem.caixa status is now: NodeSchedulable
+  Normal  NodeNotSchedulable       117m (x3 over 151m)  kubelet          Node worker-0.suportenuvem.caixa status is now: NodeNotSchedulable
+  Normal  NodeNotReady             117m (x2 over 159m)  node-controller  Node worker-0.suportenuvem.caixa status is now: NodeNotReady
+  Normal  Starting                 112m                 kubelet          Starting kubelet.
+  Normal  NodeAllocatableEnforced  112m                 kubelet          Updated Node Allocatable limit across pods
+  Normal  NodeHasSufficientMemory  112m (x8 over 112m)  kubelet          Node worker-0.suportenuvem.caixa status is now: NodeHasSufficientMemory
+  Normal  NodeHasNoDiskPressure    112m (x8 over 112m)  kubelet          Node worker-0.suportenuvem.caixa status is now: NodeHasNoDiskPressure
+  Normal  NodeHasSufficientPID     112m (x7 over 112m)  kubelet          Node worker-0.suportenuvem.caixa status is now: NodeHasSufficientPID
+  Normal  RegisteredNode           89m                  node-controller  Node worker-0.suportenuvem.caixa event: Registered Node worker-0.suportenuvem.caixa in Controller
+  Normal  NodeNotSchedulable       61m (x2 over 111m)   kubelet          Node worker-0.suportenuvem.caixa status is now: NodeNotSchedulable
+[p940372@cadcllx004 ~]$ oc describe mcp worker
+Name:         worker
+Namespace:
+Labels:       machineconfiguration.openshift.io/mco-built-in=
+              pools.operator.machineconfiguration.openshift.io/worker=
+Annotations:  <none>
+API Version:  machineconfiguration.openshift.io/v1
+Kind:         MachineConfigPool
+Metadata:
+  Creation Timestamp:  2024-07-16T16:52:43Z
+  Generation:          19
+  Resource Version:    2379130761
+  UID:                 d290804e-4873-4e80-b170-436cbf0eca6d
+Spec:
+  Configuration:
+    Name:  rendered-worker-fa4a4330065b85420962decea98ec5b5
+    Source:
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         00-override-worker-generated-crio-default-container-runtime
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         00-worker
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         01-worker-container-runtime
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         01-worker-interface
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         01-worker-kubelet
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         50-workers-chrony-configuration
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         97-worker-generated-kubelet
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         98-worker-generated-kubelet
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-worker-chrony
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-worker-generated-kubelet
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-worker-generated-registries
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-worker-ipv4-ipv6-method-disabled
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-worker-multipathing
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-worker-ssh
+  Machine Config Selector:
+    Match Labels:
+      machineconfiguration.openshift.io/role:  worker
+  Node Selector:
+    Match Labels:
+      node-role.kubernetes.io/worker:
+  Paused:                              false
+Status:
+  Cert Expirys:
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2034-07-14T16:40:02Z
+    Subject:  CN=admin-kubeconfig-signer,OU=openshift
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-08-06T12:03:06Z
+    Subject:  CN=openshift-kube-controller-manager-operator_csr-signer-signer@1780833786
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-07-24T00:04:49Z
+    Subject:  CN=kube-csr-signer_@1782259489
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-08-08T00:05:33Z
+    Subject:  CN=kube-csr-signer_@1783555532
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-09-05T12:03:12Z
+    Subject:  CN=openshift-kube-controller-manager-operator_csr-signer-signer@1783425791
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2027-02-20T16:40:19Z
+    Subject:  CN=openshift-kube-apiserver-operator_kube-apiserver-to-kubelet-signer@1771605619
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-09-04T16:47:36Z
+    Subject:  CN=openshift-kube-apiserver-operator_kube-control-plane-signer@1783356456
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2026-08-05T16:47:18Z
+    Subject:  CN=openshift-kube-apiserver-operator_kube-control-plane-signer@1780764438
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2034-07-14T16:40:03Z
+    Subject:  CN=kubelet-bootstrap-kubeconfig-signer,OU=openshift
+    Bundle:   KubeAPIServerServingCAData
+    Expiry:   2027-02-20T16:53:16Z
+    Subject:  CN=openshift-kube-apiserver-operator_node-system-admin-signer@1771606396
+  Conditions:
+    Last Transition Time:  2024-07-16T16:52:54Z
+    Message:
+    Reason:
+    Status:                False
+    Type:                  RenderDegraded
+    Last Transition Time:  2026-07-08T17:27:35Z
+    Message:
+    Reason:
+    Status:                False
+    Type:                  Updated
+    Last Transition Time:  2026-07-08T17:27:35Z
+    Message:               All nodes are updating to MachineConfig rendered-worker-fa4a4330065b85420962decea98ec5b5
+    Reason:
+    Status:                True
+    Type:                  Updating
+    Last Transition Time:  2026-07-11T01:05:24Z
+    Message:
+    Reason:
+    Status:                False
+    Type:                  NodeDegraded
+    Last Transition Time:  2026-07-11T01:05:24Z
+    Message:
+    Reason:
+    Status:                False
+    Type:                  Degraded
+  Configuration:
+    Name:  rendered-worker-917f7a264d3b19f6501368eddf3372e2
+    Source:
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   00-override-worker-generated-crio-default-container-runtime
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   00-worker
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   01-worker-container-runtime
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   01-worker-interface
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   01-worker-kubelet
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   50-workers-chrony-configuration
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   97-worker-generated-kubelet
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   98-worker-generated-kubelet
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-worker-chrony
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-worker-generated-kubelet
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-worker-generated-registries
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-worker-ipv4-ipv6-method-disabled
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-worker-multipathing
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-worker-ssh
+  Degraded Machine Count:     0
+  Machine Count:              2
+  Observed Generation:        19
+  Ready Machine Count:        1
+  Unavailable Machine Count:  1
+  Updated Machine Count:      2
+Events:                       <none>
+[p940372@cadcllx004 ~]$
