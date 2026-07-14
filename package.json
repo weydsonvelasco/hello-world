@@ -1,7 +1,10 @@
-**Business Impact: High**
-
-The business impact is **High** because our current environment is at risk of losing the datastore that hosts the OpenShift virtual machines. At the moment, we do not have datastore redundancy, and we are evaluating the best supported architecture to mitigate this risk.
-
-Before implementing any changes in production, we need confirmation from Red Hat regarding the supported and recommended architecture for OpenShift IPI on VMware vSphere, specifically concerning the use of Cluster Datastore and the distribution of control plane nodes across multiple datastores.
-
-This information is critical to ensure the environment remains fully supported while improving storage resiliency and availability.
+for h in /sys/class/fc_host/host*; do
+  echo "=== $(basename $h) ==="
+  echo -n "WWPN:      "; cat $h/port_name
+  echo -n "WWNN:      "; cat $h/node_name
+  echo -n "Port ID:   "; cat $h/port_id
+  echo -n "State:     "; cat $h/port_state
+  echo -n "Speed:     "; cat $h/speed
+  echo -n "Fabric:    "; cat $h/supported_classes 2>/dev/null || true
+  echo
+done
